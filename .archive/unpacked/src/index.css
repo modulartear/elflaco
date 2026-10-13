@@ -1,0 +1,197 @@
+@import "tailwindcss";
+
+@font-face { font-family: "Barlow Condensed:ExtraBold"; src: url("https://static.figma.com/font/BarlowCondensed-ExtraBold_2") format("woff2"); font-style: normal; font-weight: 800; }
+@font-face { font-family: "Barlow:Bold"; src: url("https://static.figma.com/font/Barlow-Bold_2") format("woff2"); font-style: normal; font-weight: 700; }
+@font-face { font-family: "Barlow:Regular"; src: url("https://static.figma.com/font/Barlow-Regular_2") format("woff2"); font-style: normal; font-weight: 400; }
+@font-face { font-family: "Montserrat:Bold"; src: url("https://static.figma.com/font/Montserrat_wght__2") format("woff2"); font-style: normal; font-weight: 700; }
+@font-face { font-family: "Montserrat:Light Italic"; src: url("https://static.figma.com/font/Montserrat-Italic_wght__2") format("woff2"); font-style: italic; font-weight: 300; }
+@font-face { font-family: "Montserrat:Regular"; src: url("https://static.figma.com/font/Montserrat_wght__2") format("woff2"); font-style: normal; font-weight: 400; }
+@font-face { font-family: "Montserrat:SemiBold"; src: url("https://static.figma.com/font/Montserrat_wght__2") format("woff2"); font-style: normal; font-weight: 600; }
+@font-face { font-family: "Noto Sans Math:Regular"; src: url("https://static.figma.com/font/NotoSansMath-Regular_1") format("woff2"); font-style: normal; font-weight: 400; }
+@font-face { font-family: "Noto Sans Symbols2:Regular"; src: url("https://static.figma.com/font/NotoSansSymbols2-Regular_5") format("woff2"); font-style: normal; font-weight: 400; }
+@font-face { font-family: "Noto Sans Symbols:Regular"; src: url("https://static.figma.com/font/NotoSansSymbols-VF_2") format("woff2"); font-style: normal; font-weight: 400; }
+@font-face { font-family: "Noto Sans:Regular"; src: url("https://static.figma.com/font/NotoSans-VF_3") format("woff2"); font-style: normal; font-weight: 400; }
+
+:root { color: #333; background: #fff; font-family: "Montserrat:Regular", Arial, sans-serif; font-synthesis: none; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; }
+button, input, select { font: inherit; }
+button, a, select { cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+.content { width: min(1300px, calc(100% - 32px)); margin-inline: auto; }
+.site-shell { min-height: 100dvh; overflow: hidden; background: white; }
+.toast { position: fixed; z-index: 100; right: 22px; top: 22px; max-width: 380px; padding: 14px 20px; color: white; background: #222; border-left: 5px solid #ff7900; box-shadow: 0 8px 30px #0004; font-size: 13px; }
+
+header { background: #fff; }
+.header-main { min-height: 112px; display: flex; align-items: center; gap: 35px; }
+.logo { width: 270px; height: 90px; overflow: hidden; display: flex; align-items: center; }
+.logo img { width: 100%; height: 135%; object-fit: contain; }
+.search { flex: 1; height: 44px; display: flex; border-radius: 3px; box-shadow: 0 2px 8px #0003; overflow: hidden; }
+.search input { min-width: 0; flex: 1; border: 0; outline: 0; padding: 0 14px; color: #333; }
+.search button { width: 48px; display: grid; place-items: center; border: 0; background: white; }
+.search button img { width: 20px; height: 20px; }
+.account, .cart, .menu-toggle { border: 0; background: none; color: #222; }
+.account { display: flex; gap: 8px; align-items: center; font-size: 13px; }
+.account img { width: 24px; height: 24px; }
+.cart { position: relative; font-size: 24px; }
+.cart > img { width: 27px; height: 25px; }
+.cart b { position: absolute; right: -9px; top: -9px; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; color: white; background: #ff7900; font-size: 10px; }
+.menu-toggle { display: none; width: 24px; padding: 3px 0; }
+.menu-toggle span { display: block; height: 2px; margin: 4px 0; background: #222; }
+.nav { background: #050505; color: white; border-bottom: 4px solid #ff7900; }
+.nav .content { display: flex; align-items: center; justify-content: center; }
+.nav a { padding: 13px 19px; font-family: "Barlow:Bold"; font-size: 12px; transition: color .2s; }
+.nav a:hover { color: #ff7900; }
+.promo { display: flex; justify-content: center; align-items: center; gap: 28px; background: #b0b0b0; color: #111; text-align: center; font-family: "Montserrat:Bold"; font-size: 10px; padding: 7px; letter-spacing: .3px; }
+.promo img { width: 7px; height: 13px; }
+
+.hero { display: grid; grid-template-columns: 1.42fr 1fr; gap: 15px; padding-top: 38px; }
+.hero img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hero-main, .hero-side a { overflow: hidden; border-radius: 4px; box-shadow: 0 0 6px #3334; }
+.hero-main { aspect-ratio: 734/495; }
+.hero-side { display: grid; gap: 14px; }
+.hero-side a { min-height: 0; }
+.finder { margin-top: 18px; padding: 15px; background: #111; border-radius: 5px; color: white; }
+.finder h2 { margin: 0 0 10px; text-align: center; font: 800 18px "Barlow Condensed:ExtraBold"; letter-spacing: .8px; }
+.finder-fields { display: grid; grid-template-columns: repeat(4, 1fr) 145px; gap: 10px; }
+.finder select, .finder button, .tire-finder select, .tire-finder button { height: 41px; border: 0; border-radius: 3px; padding: 0 12px; font-size: 12px; }
+.select-wrap { position: relative; }
+.select-wrap select { width: 100%; appearance: none; }
+.select-wrap img { position: absolute; right: 12px; top: 17px; width: 10px; height: 7px; pointer-events: none; }
+.finder button, .tire-finder button { color: white; background: #888; font-family: "Barlow Condensed:ExtraBold"; text-transform: uppercase; letter-spacing: .8px; }
+
+.categories { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; padding-top: 38px; }
+.category { position: relative; overflow: hidden; border-radius: 4px; aspect-ratio: 306/217; box-shadow: 0 0 6px #3334; }
+.category img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s; }
+.category:hover img { transform: scale(1.045); }
+.category > div { position: absolute; inset: auto 0 0; padding: 55px 15px 15px; color: white; background: linear-gradient(transparent, #0009); }
+.category h2 { margin: 0 0 12px; font: 700 22px "Montserrat:Bold"; }
+.category span { display: inline-block; padding: 8px; border-radius: 2px; color: #333; background: white; font: 700 11px "Montserrat:Bold"; }
+
+.products-section { padding: 36px 0 40px; background: white; }
+.section-heading { display: flex; justify-content: space-between; align-items: end; margin-bottom: 18px; }
+.section-heading h2, .brands h2 { margin: 0; font: 700 22px "Montserrat:Bold"; }
+.section-arrows { display: flex; align-items: center; gap: 9px; }
+.section-arrows img { width: 9px; height: 18px; }
+.section-heading span { color: #888; font-size: 10px; display: none; }
+.product-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; }
+.product-card { min-width: 0; overflow: hidden; border-radius: 4px; background: white; box-shadow: 0 0 6px #3334; transition: transform .2s, box-shadow .2s; }
+.product-card:hover { transform: translateY(-3px); box-shadow: 0 7px 18px #3333; }
+.product-image { position: relative; aspect-ratio: 1; overflow: hidden; }
+.product-image > img { width: 100%; height: 100%; object-fit: contain; }
+.shipping { position: absolute; left: 0; top: 10px; display: flex; align-items: center; gap: 3px; padding: 5px 8px; border-radius: 0 4px 4px 0; color: white; background: #27ae60; font: 700 9px "Montserrat:Bold"; text-transform: uppercase; }
+.shipping img { width: 17px; height: 9px; }
+.installment-badge { position: absolute; bottom: 3px; left: 4px; padding: 4px 6px; border-radius: 3px; color: white; background: #00a650; font: 700 8px "Montserrat:Bold"; }
+.product-info { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 7px 10px 13px; text-align: center; }
+.product-info h3 { height: 35px; margin: 0; overflow: hidden; font: 400 11px/1.45 "Montserrat:Regular"; }
+.rating { height: 14px; color: #f5aa00; font-size: 11px; }
+.rating span { color: #555; }
+.price { font: 700 14px "Montserrat:Bold"; }
+.transfer { color: #00a650; font-size: 11px; font-weight: 700; }
+.installments { font-size: 11px; }
+.product-info button { width: 100%; margin-top: 3px; padding: 9px; border: 0; border-radius: 3px; color: white; background: #ff7900; font: 700 12px "Montserrat:Bold"; transition: filter .2s; }
+.product-info button img { display: inline-block; width: 10px; height: 9px; margin-left: 4px; }
+.product-info button:hover { filter: brightness(.9); }
+
+.brands { padding: 24px 0; background: #dfdfdf; }
+.brand-row { display: flex; gap: 28px; align-items: center; margin-top: 18px; overflow-x: auto; scrollbar-width: none; }
+.brand-carousel { display: flex; align-items: center; gap: 12px; }
+.brand-carousel .brand-row { min-width: 0; flex: 1; }
+.carousel-arrow { width: 9px; height: 18px; }
+.brand-row img { flex: 0 0 92px; width: 92px; height: 58px; object-fit: contain; mix-blend-mode: multiply; }
+.wide-banner { display: block; margin-top: 25px; margin-bottom: 25px; overflow: hidden; border-radius: 4px; box-shadow: 0 0 6px #3334; }
+.wide-banner img { width: 100%; display: block; }
+.rider-area { padding-top: 205px; background-position: center top; background-size: cover; }
+.products-dark { color: white; background: #070707d9; }
+.products-dark .product-card { color: #333; }
+.benefits { display: grid; grid-template-columns: repeat(4, 1fr); padding: 28px 0; }
+.benefits > div { display: grid; grid-template-columns: 42px 1fr; padding: 0 20px; border-right: 1px solid #ddd; }
+.benefits > div:last-child { border: 0; }
+.benefits i { grid-row: span 2; display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid #aaa; border-radius: 50%; font-style: normal; }
+.benefits i img { max-width: 25px; max-height: 18px; }
+.benefits strong { font: 700 11px/1.35 "Montserrat:Bold"; }
+.benefits span { margin-top: 4px; font-size: 9px; line-height: 1.4; }
+.tire-finder { position: relative; min-height: 300px; display: flex; align-items: center; overflow: hidden; margin-top: 10px; color: white; background: #202020; }
+.tire-copy { position: relative; z-index: 1; width: 62%; padding: 40px; }
+.tire-copy h2 { max-width: 420px; margin: 0 0 25px; font: 800 36px/1 "Barlow Condensed:ExtraBold"; text-transform: uppercase; }
+.tire-copy > div { display: grid; grid-template-columns: repeat(3, 1fr) 100px; gap: 8px; }
+.tire-select { position: relative; }
+.tire-select select { width: 100%; appearance: none; }
+.tire-select img { position: absolute; right: 10px; top: 17px; width: 12px; height: 7px; pointer-events: none; }
+.tire-finder img { position: absolute; right: 0; top: 0; width: 54%; height: 100%; object-fit: cover; object-position: center; mask-image: linear-gradient(to right, transparent, black 30%); }
+.tire-finder button { background: #ff7900; }
+
+footer { margin-top: 38px; color: #ccc; background: #050505; }
+.social { display: flex; justify-content: center; gap: 34px; padding: 35px; background: #ff8200; }
+.social a { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: white; }
+.social img { max-width: 18px; max-height: 16px; }
+.footer-main { display: grid; grid-template-columns: 1fr 1fr 1.2fr 1.6fr; gap: 50px; padding-top: 38px; padding-bottom: 34px; }
+.footer-main h3 { margin: 0 0 15px; color: white; font: 700 13px "Montserrat:Bold"; text-transform: uppercase; }
+.footer-main a, .footer-main p { display: block; margin: 0 0 8px; font-size: 10px; }
+.footer-main form { display: flex; height: 42px; }
+.footer-main input { min-width: 0; flex: 1; padding: 0 12px; border: 1px solid #333; color: white; background: #ffffff16; outline: 0; }
+.footer-main button { border: 0; padding: 0 15px; background: white; font: 700 10px "Montserrat:Bold"; }
+.payment-area { display: grid; grid-template-columns: 130px 1fr auto; gap: 20px; align-items: center; padding-top: 22px; padding-bottom: 22px; border-top: 1px solid #ffffff1c; }
+.payment-area > span { color: white; font: 700 11px "Montserrat:Bold"; }
+.payment-area > div { display: flex; flex-wrap: wrap; gap: 4px; }
+.payment-area div > img { width: 42px; height: 26px; object-fit: contain; background: white; border-radius: 2px; }
+.payment-area .seals img { width: 37px; height: 50px; background: transparent; }
+.copyright { padding: 12px 20px 55px; color: #aaa; background: #ffffff0d; text-align: center; font-size: 9px; }
+.whatsapp { position: fixed; z-index: 20; right: 20px; bottom: 20px; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: #4dc247; box-shadow: 0 3px 12px #0004; }
+.whatsapp img { width: 25px; height: 25px; }
+
+@media (max-width: 1000px) {
+  .header-main { min-height: 90px; gap: 16px; }
+  .logo { width: 190px; height: 70px; }
+  .account span { display: none; }
+  .nav a { padding-inline: 10px; font-size: 10px; }
+  .product-row { grid-template-columns: repeat(3, 1fr); }
+  .finder-fields { grid-template-columns: repeat(2, 1fr); }
+  .finder-fields button { grid-column: span 2; }
+  .categories { grid-template-columns: repeat(2, 1fr); }
+  .benefits { grid-template-columns: repeat(2, 1fr); gap: 24px 0; }
+  .footer-main { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .content { width: min(100% - 24px, 1300px); }
+  .toast { left: 12px; right: 12px; top: 12px; }
+  .header-main { min-height: 72px; gap: 10px; }
+  .menu-toggle { display: block; padding: 0; }
+  .logo { width: 125px; height: 55px; }
+  .search { order: 5; flex-basis: 100%; height: 40px; }
+  .header-main { flex-wrap: wrap; padding: 8px 0 12px; }
+  .account { display: none; }
+  .cart { margin-left: auto; }
+  .nav { display: none; }
+  .nav.open { display: block; }
+  .nav .content { flex-direction: column; align-items: stretch; }
+  .nav a { padding: 11px; border-bottom: 1px solid #222; }
+  .promo { font-size: 8px; }
+  .hero { grid-template-columns: 1fr; padding-top: 18px; }
+  .hero-side { grid-template-columns: 1fr; }
+  .hero-side a { aspect-ratio: 520/155; }
+  .finder-fields { grid-template-columns: 1fr; }
+  .finder-fields button { grid-column: auto; }
+  .categories { display: flex; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+  .category { flex: 0 0 78vw; }
+  .products-section { padding: 28px 0; }
+  .product-row { display: flex; overflow-x: auto; padding: 3px 3px 16px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .product-card { flex: 0 0 min(72vw, 245px); scroll-snap-align: start; }
+  .section-heading span { display: block; }
+  .section-heading h2, .brands h2 { font-size: 19px; }
+  .brand-row { gap: 15px; }
+  .wide-banner { width: 100%; border-radius: 0; }
+  .wide-banner img { min-height: 160px; object-fit: cover; object-position: center; }
+  .rider-area { padding-top: 130px; }
+  .benefits { grid-template-columns: 1fr; gap: 0; }
+  .benefits > div { padding: 18px 5px; border-right: 0; border-bottom: 1px solid #ddd; }
+  .tire-finder { width: 100%; min-height: 430px; align-items: end; }
+  .tire-finder img { width: 100%; height: 47%; top: 0; mask-image: linear-gradient(to bottom, black 65%, transparent); }
+  .tire-copy { width: 100%; padding: 25px 20px; }
+  .tire-copy h2 { font-size: 29px; }
+  .tire-copy > div { grid-template-columns: 1fr; }
+  .footer-main { grid-template-columns: 1fr; gap: 24px; }
+  .payment-area { grid-template-columns: 1fr; }
+}
