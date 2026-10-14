@@ -1,6 +1,6 @@
 "use client"
 
-import { DragEvent, FormEvent, useEffect, useState } from "react"
+import { DragEvent, FormEvent, useEffect, useRef, useState } from "react"
 import { BarChart3, Boxes, CreditCard, ImagePlus, LayoutDashboard, Menu, PackagePlus, Search, Settings2, Tags, Truck, X } from "lucide-react"
 
 type Product = { id: string; name: string; sku: string | null; price: string; stock: number; active: boolean; featured: boolean }
@@ -27,6 +27,7 @@ export default function AdminPage() {
   const [canvasDropActive, setCanvasDropActive] = useState(false)
   const [addedWidgets, setAddedWidgets] = useState<Array<{ id: string; widget: string; x: number; y: number }>>([])
   const [dropTarget, setDropTarget] = useState<{ id: string; position: "before" | "after" } | null>(null)
+  const dropLock = useRef(false)
   const [heroTitle, setHeroTitle] = useState("ENCONTRÁ TODO PARA TU MOTO")
   const [headerTitle, setHeaderTitle] = useState("EL FLACO MOTOS")
   const [productsTitle, setProductsTitle] = useState("Productos destacados")
@@ -57,7 +58,8 @@ export default function AdminPage() {
   }
 
   function handleWidgetDrop() {
-    if (!draggedWidget) return
+    if (!draggedWidget || dropLock.current) return
+    dropLock.current = true
     const id = `${draggedWidget}-${Date.now()}`
     setAddedWidgets((current) => [...current, { id, widget: draggedWidget }])
     setSectionOrder((current) => {
@@ -71,6 +73,7 @@ export default function AdminPage() {
     setDropTarget(null)
     setCanvasDropActive(false)
     setMessage(`${draggedWidget} agregado en la posición seleccionada`)
+    window.setTimeout(() => { dropLock.current = false }, 0)
   }
 
   function widgetDragProps(widget: string) {
@@ -86,7 +89,7 @@ export default function AdminPage() {
       draggable: true,
       onDragStart: () => { setDraggedSection(section); setSelectedSection(section) },
       onDragOver: (event: DragEvent<HTMLDivElement>) => { event.preventDefault(); if (draggedWidget) { const rect = event.currentTarget.getBoundingClientRect(); setDropTarget({ id: section, position: event.clientY < rect.top + rect.height / 2 ? "before" : "after" }) } },
-      onDrop: (event: DragEvent<HTMLDivElement>) => { event.preventDefault(); if (draggedWidget) handleWidgetDrop(); else moveSection(section) },
+      onDrop: (event: DragEvent<HTMLDivElement>) => { event.preventDefault(); event.stopPropagation(); if (draggedWidget) handleWidgetDrop(); else moveSection(section) },
       onDragEnd: () => setDraggedSection(null),
     }
   }
