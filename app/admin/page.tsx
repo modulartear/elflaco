@@ -42,7 +42,7 @@ export default function AdminPage() {
   const [dropTarget, setDropTarget] = useState<{ id: string; position: "before" | "after" } | null>(null)
   const dropLock = useRef(false)
   const [heroTitle, setHeroTitle] = useState("ENCONTRÁ TODO PARA TU MOTO")
-  const [headerTitle, setHeaderTitle] = useState("EL FLACO MOTOS")
+  const [headerTitle, setHeaderTitle] = useState("Mi tienda")
   const [productsTitle, setProductsTitle] = useState("Productos destacados")
   const [footerText, setFooterText] = useState("Calidad y confianza para tu moto")
   const [activeCatalogView, setActiveCatalogView] = useState("Productos")
@@ -50,9 +50,9 @@ export default function AdminPage() {
   const [shippingCarriers, setShippingCarriers] = useState(["Andreani", "OCA", "Correo Argentino"])
   const [freeShipping, setFreeShipping] = useState(true)
   const [globalSettingsOpen, setGlobalSettingsOpen] = useState(false)
-  const [storeName, setStoreName] = useState("El Flaco Motos")
-  const [storeEmail, setStoreEmail] = useState("info@elflacomotos.com.ar")
-  const [storePhone, setStorePhone] = useState("3462-221781 / 3462-389514")
+  const [storeName, setStoreName] = useState("")
+  const [storeEmail, setStoreEmail] = useState("")
+  const [storePhone, setStorePhone] = useState("")
   const [storeVisible, setStoreVisible] = useState(true)
   const [orderNotifications, setOrderNotifications] = useState(true)
   const [stores, setStores] = useState<Array<{ id: string; name: string; role: string }>>([])
@@ -60,7 +60,7 @@ export default function AdminPage() {
 
   async function loadProducts() { const response = await fetch("/api/catalog"); if (response.ok) setProducts(await response.json()) }
   async function loadGlobalSettings() { const response = await fetch("/api/store-settings"); if (!response.ok) return; const settings = await response.json(); if (settings.storeName) setStoreName(settings.storeName); if (settings.storeEmail) setStoreEmail(settings.storeEmail); if (settings.storePhone) setStorePhone(settings.storePhone); if (typeof settings.storeVisible === "boolean") setStoreVisible(settings.storeVisible); if (typeof settings.orderNotifications === "boolean") setOrderNotifications(settings.orderNotifications) }
-  async function loadStores() { const response = await fetch("/api/stores"); if (!response.ok) return; const data = await response.json(); setStores(data.stores ?? []); setActiveStoreId(data.activeStoreId ?? "") }
+  async function loadStores() { const response = await fetch("/api/stores"); if (!response.ok) return; const data = await response.json(); const availableStores = data.stores ?? []; setStores(availableStores); const selectedStoreId = data.activeStoreId ?? availableStores[0]?.id ?? ""; setActiveStoreId(selectedStoreId); const selectedStore = availableStores.find((store: { id: string; name: string }) => store.id === selectedStoreId); if (selectedStore?.name) { setStoreName((current) => current || selectedStore.name); setHeaderTitle((current) => current === "Mi tienda" ? selectedStore.name : current) } }
   async function changeStore(storeId: string) { const response = await fetch("/api/stores", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ storeId }) }); if (!response.ok) return; setActiveStoreId(storeId); window.location.reload() }
   useEffect(() => { loadProducts(); loadGlobalSettings(); loadStores() }, [])
 
@@ -167,7 +167,7 @@ export default function AdminPage() {
   const filtered = products.filter((product) => product.name.toLowerCase().includes(query.toLowerCase()) || product.sku?.toLowerCase().includes(query.toLowerCase()))
   return <div className="admin-shell">
     <aside className="admin-sidebar">
-      <div className="admin-store-head"><div className="admin-brand"><span>EF</span><div><strong>El Flaco Motos</strong><small>ADMINISTRACIÓN</small></div></div><a className="admin-store-link" href="/" target="_blank" rel="noreferrer">elflacomotos.com.ar <span>↗</span></a><div className="admin-store-status"><strong>Tienda publicada</strong><span aria-label="Tienda online activa" /></div></div>
+      <div className="admin-store-head"><div className="admin-brand"><span>{(storeName || "Mi tienda").slice(0, 2).toUpperCase()}</span><div><strong>{storeName || "Mi tienda"}</strong><small>ADMINISTRACIÓN</small></div></div><a className="admin-store-link" href={stores.find((store) => store.id === activeStoreId)?.slug ? `/?store=${stores.find((store) => store.id === activeStoreId)?.slug}` : "/"} target="_blank" rel="noreferrer">{stores.find((store) => store.id === activeStoreId)?.slug || "Ver tienda"} <span>↗</span></a><div className="admin-store-status"><strong>Tienda publicada</strong><span aria-label="Tienda online activa" /></div></div>
       <nav>
         <div className="admin-nav-group"><span className="admin-nav-title">Principal</span>{nav.slice(0, 1).map(([label, Icon]) => <button className="active" key={label}><Icon size={18} />{label}</button>)}</div>
         <div className="admin-nav-group"><span className="admin-nav-title">Mi tienda</span>{nav.slice(1, 5).map(([label, Icon]) => <button key={label} onClick={() => setActiveCatalogView(label)} className={activeCatalogView === label ? "active" : ""}><Icon size={18} />{label}{label === "Productos" && <b>{products.length}</b>}<span className="nav-chevron">⌄</span></button>)}</div>
