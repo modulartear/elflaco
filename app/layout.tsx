@@ -3,8 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'El Flaco Motos | Todo para tu moto',
-  description: 'Repuestos, cubiertas, indumentaria, cascos y accesorios para motos.',
+  title: 'Tienda online | Catálogo y compras',
+  description: 'Catálogo, productos y contacto de tu tienda online.',
   generator: 'v0.app',
   icons: {
     icon: [
