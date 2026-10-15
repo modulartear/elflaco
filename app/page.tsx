@@ -99,7 +99,8 @@ export default function App() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const publicStore = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("store") : null;
   const catalogUrl = publicStore ? `/api/catalog?store=${encodeURIComponent(publicStore)}` : "/api/catalog";
-  const { data: store } = useSWR<{ name: string; email: string; phone: string; storeName?: string; storeEmail?: string; storePhone?: string }>(publicStore ? `/api/public-store?store=${encodeURIComponent(publicStore)}` : "/api/public-store", (url) => fetch(url).then((response) => response.ok ? response.json() : null));
+  const { data: store } = useSWR<{ name: string; email: string; phone: string; storeName?: string; storeEmail?: string; storePhone?: string; design?: { brandColor?: string; headingFont?: string; bodyFont?: string; borderStyle?: string; heroTitle?: string; headerTitle?: string; productsTitle?: string; footerText?: string } }>(publicStore ? `/api/public-store?store=${encodeURIComponent(publicStore)}` : "/api/public-store", (url) => fetch(url).then((response) => response.ok ? response.json() : null));
+  const design = store?.design ?? {};
   const storeName = store?.storeName || store?.name || "Mi tienda";
   const storeEmail = store?.storeEmail || store?.email || "";
   const storePhone = store?.storePhone || store?.phone || "";
@@ -169,12 +170,12 @@ export default function App() {
   }
 
   return (
-    <div className="site-shell">
+    <div className="site-shell" style={{ "--brand-color": design.brandColor || "#42b85a", "--heading-font": design.headingFont || "Open Sans", "--body-font": design.bodyFont || "Open Sans" } as React.CSSProperties}>
       {notice && <div className="toast" role="status">{notice}</div>}
       <header>
         <div className="header-main content">
           <button className="menu-toggle" aria-label="Abrir menú" onClick={() => setMenuOpen(!menuOpen)}><span /><span /><span /></button>
-          <a href="#inicio" className="logo" aria-label={storeName}><span className="store-logo-text">{storeName}</span></a>
+          <a href="#inicio" className="logo" aria-label={storeName}><span className="store-logo-text">{design.headerTitle || storeName}</span></a>
           <form className="search" onSubmit={(event) => event.preventDefault()}>
             <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="¿Qué estás buscando?" aria-label="Buscar productos" />
             <button aria-label="Buscar"><img src={`${A}/c4d6c.svg`} alt="" /></button>
@@ -209,7 +210,7 @@ export default function App() {
 
       {selectedProduct ? <ProductDetail product={selectedProduct} onBuy={addToCart} onBack={closeProduct} /> : <main id="inicio">
         <section className="finder content">
-          <h2>ENCONTRÁ TODO EN {storeName.toUpperCase()}</h2>
+          <h2>{design.heroTitle || `ENCONTRÁ TODO EN ${storeName.toUpperCase()}`}</h2>
           <div className="finder-fields">
             {["Elegí una categoría", "Elegí una subcategoría", "Elegí una marca", "Elegí un modelo"].map((label, index) => (
               <label className="select-wrap" key={label}>
@@ -228,7 +229,7 @@ export default function App() {
           <ProductSection title={`Resultados para “${search}”`} products={filteredProducts} onBuy={addToCart} onOpen={openProduct} />
         )}
 
-        {liveProducts.length > 0 && <ProductSection title={`Productos destacados de ${storeName}`} products={liveProducts} onBuy={addToCart} onOpen={openProduct} />}
+        {liveProducts.length > 0 && <ProductSection title={design.productsTitle || `Productos destacados de ${storeName}`} products={liveProducts} onBuy={addToCart} onOpen={openProduct} />}
 
         <section className="categories content">
           {[
