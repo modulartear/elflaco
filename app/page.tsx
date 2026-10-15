@@ -125,8 +125,13 @@ export default function App() {
   const [email, setEmail] = useState("");
   const [filters, setFilters] = useState(["", "", "", ""]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const { data: managedProducts = [] } = useSWR<Array<Product & { id: string }>>("/api/catalog", (url) => fetch(url).then((response) => response.json()));
-  const liveProducts = managedProducts.map((product) => ({ ...product, image: product.image || "21840.png", price: `$${Number(product.price).toLocaleString("es-AR", { minimumFractionDigits: 2 })}`, transfer: product.transfer || "Consultá por transferencia", installments: "Hasta 6 cuotas sin interés" }));
+  const { data: managedProducts = [] } = useSWR<Array<Product & { id: string }>>("/api/catalog", async (url) => {
+    const response = await fetch(url);
+    if (!response.ok) return [];
+    const payload: unknown = await response.json();
+    return Array.isArray(payload) ? payload : [];
+  });
+  const liveProducts = Array.isArray(managedProducts) ? managedProducts.map((product) => ({ ...product, image: product.image || (product as Product & { imageUrl?: string }).imageUrl || "21840.png", price: `$${Number(product.price).toLocaleString("es-AR", { minimumFractionDigits: 2 })}`, transfer: product.transfer || "Consultá por transferencia", installments: "Hasta 6 cuotas sin interés" })) : [];
 
   useEffect(() => {
     const syncProductRoute = () => {
