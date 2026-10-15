@@ -25,6 +25,14 @@ export function AuthForm() {
       setPending(false)
       return
     }
+    if (mode === "sign-up") {
+      const onboarding = await fetch("/api/stores/onboarding", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name }) })
+      if (!onboarding.ok) {
+        setError("La cuenta se creó, pero no pudimos preparar tu tienda. Ingresá nuevamente para reintentar.")
+        setPending(false)
+        return
+      }
+    }
     router.push("/admin")
     router.refresh()
   }
