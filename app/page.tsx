@@ -125,7 +125,9 @@ export default function App() {
   const [email, setEmail] = useState("");
   const [filters, setFilters] = useState(["", "", "", ""]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const { data: managedProducts = [] } = useSWR<Array<Product & { id: string }>>("/api/catalog", async (url) => {
+  const publicStore = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("store") : null;
+  const catalogUrl = publicStore ? `/api/catalog?store=${encodeURIComponent(publicStore)}` : "/api/catalog";
+  const { data: managedProducts = [] } = useSWR<Array<Product & { id: string }>>(catalogUrl, async (url) => {
     const response = await fetch(url);
     if (!response.ok) return [];
     const payload: unknown = await response.json();

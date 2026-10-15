@@ -32,7 +32,12 @@ function sqlMembership(userId: string, storeId: string) {
   return db.execute(sql`SELECT "storeId", role FROM store_memberships WHERE "userId" = ${userId} AND "storeId" = ${storeId} LIMIT 1`)
 }
 
-export async function getPublicTenantId() {
+export async function getPublicTenantId(storeSlug?: string) {
+  if (storeSlug) {
+    const result = await db.execute(sql`SELECT id FROM stores WHERE slug = ${storeSlug} LIMIT 1`)
+    const storeId = (result.rows[0] as { id?: string } | undefined)?.id
+    if (storeId) return storeId
+  }
   const session = await auth.api.getSession({ headers: await headers() })
   if (session?.user?.id) {
     try {
