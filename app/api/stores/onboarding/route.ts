@@ -3,7 +3,7 @@ import { NextResponse } from "next/server"
 import { sql } from "drizzle-orm"
 import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
-import { TenantError, tenantErrorResponse } from "@/lib/tenant"
+import { ensureTenantForUser, TenantError, tenantErrorResponse } from "@/lib/tenant"
 
 export async function POST(request: Request) {
   try {
@@ -11,15 +11,9 @@ export async function POST(request: Request) {
     if (!session?.user?.id) throw new TenantError("UNAUTHORIZED")
 
     const body = await request.json().catch(() => ({}))
-    const storeName = typeof body.name === "string" && body.name.trim() ? body.name.trim() : `${session.user.name ?? "Mi"} tienda`
-    const baseSlug = storeName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48) || "mi-tienda"
-    const storeId = crypto.randomUUID()
-    const slug = `${baseSlug}-${storeId.slice(0, 8)}`
-
-    await db.transaction(async (tx) => {
-      await tx.execute(sql`INSERT INTO stores (id, name, slug, email, "ownerId") VALUES (${storeId}, ${storeName}, ${slug}, ${session.user.email}, ${session.user.id})`)
-      await tx.execute(sql`INSERT INTO store_memberships (id, "userId", "storeId", role) VALUES (${crypto.randomUUID()}, ${session.user.id}, ${storeId}, 'owner')`)
-    })
+    const storeId = await ensureTenantForUser({ id: session.user.id, name: typeof body.name === "string" ? body.name : session.user.name, email: session.user.email })
+    const store = await db.execute(sql`SELECT slug FROM stores WHERE id = ${storeId} LIMIT 1`)
+    const slug = (store.rows[0] as { slug?: string } | undefined)?.slug ?? ""
 
     const response = NextResponse.json({ storeId, slug }, { status: 201 })
     response.cookies.set("active-store-id", storeId, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: 60 * 60 * 24 * 30 })
