@@ -1,11 +1,11 @@
 "use client"
 
-import { FormEvent, useState } from "react"
+import { FormEvent, Suspense, useState } from "react"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { authClient } from "@/lib/auth-client"
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
   const [password, setPassword] = useState("")
@@ -15,7 +15,10 @@ export default function ResetPasswordPage() {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!token) { setError("El enlace de recuperación no es válido o ya venció."); return }
+    if (!token) {
+      setError("El enlace de recuperación no es válido o ya venció.")
+      return
+    }
     setPending(true)
     setError("")
     const result = await authClient.resetPassword({ newPassword: password, token })
@@ -25,4 +28,8 @@ export default function ResetPasswordPage() {
   }
 
   return <main className="auth-page"><form className="auth-card" onSubmit={submit}><div className="auth-brand"><div className="shopia-logo">SHOPIA</div></div><p className="auth-eyebrow">Recuperación de acceso</p><h1>Nueva contraseña</h1><p className="auth-subtitle">Elegí una contraseña segura para tu cuenta.</p><label>Contraseña<input required minLength={8} type="password" value={password} onChange={(event) => setPassword(event.target.value)} /></label>{error && <p className="auth-error" role="alert">{error}</p>}{message && <p className="auth-success" role="status">{message}</p>}{message ? <Link className="auth-switch" href="/sign-in">Ingresar a mi cuenta</Link> : <button className="auth-submit" disabled={pending}>{pending ? "Guardando..." : "Guardar contraseña"}</button>}<p className="auth-powered">Creado y potenciado por <strong>Disearte</strong></p></form></main>
+}
+
+export default function ResetPasswordPage() {
+  return <Suspense fallback={<main className="auth-page" aria-busy="true" />}><ResetPasswordForm /></Suspense>
 }
