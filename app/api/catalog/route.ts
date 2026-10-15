@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server"
 import { sql } from "drizzle-orm"
 import { db } from "@/lib/db"
-import { requireTenantAccess, tenantErrorResponse } from "@/lib/tenant"
+import { getPublicTenantId, requireTenantAccess, tenantErrorResponse } from "@/lib/tenant"
 
 export async function GET() {
   try {
-    const { storeId } = await requireTenantAccess()
+    const storeId = await getPublicTenantId()
     const products = await db.execute(sql`SELECT id, name, slug, sku, description, price::text, transfer_price::text AS "transferPrice", stock, image_url AS "imageUrl", category_id AS "categoryId", brand_id AS "brandId", featured, active FROM catalog_products WHERE "storeId" = ${storeId} AND active = true ORDER BY featured DESC, created_at DESC`)
     return NextResponse.json(products.rows)
   } catch (error) {

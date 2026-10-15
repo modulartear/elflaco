@@ -55,10 +55,14 @@ export default function AdminPage() {
   const [storePhone, setStorePhone] = useState("3462-221781 / 3462-389514")
   const [storeVisible, setStoreVisible] = useState(true)
   const [orderNotifications, setOrderNotifications] = useState(true)
+  const [stores, setStores] = useState<Array<{ id: string; name: string; role: string }>>([])
+  const [activeStoreId, setActiveStoreId] = useState("")
 
   async function loadProducts() { const response = await fetch("/api/catalog"); if (response.ok) setProducts(await response.json()) }
   async function loadGlobalSettings() { const response = await fetch("/api/store-settings"); if (!response.ok) return; const settings = await response.json(); if (settings.storeName) setStoreName(settings.storeName); if (settings.storeEmail) setStoreEmail(settings.storeEmail); if (settings.storePhone) setStorePhone(settings.storePhone); if (typeof settings.storeVisible === "boolean") setStoreVisible(settings.storeVisible); if (typeof settings.orderNotifications === "boolean") setOrderNotifications(settings.orderNotifications) }
-  useEffect(() => { loadProducts(); loadGlobalSettings() }, [])
+  async function loadStores() { const response = await fetch("/api/stores"); if (!response.ok) return; const data = await response.json(); setStores(data.stores ?? []); setActiveStoreId(data.activeStoreId ?? "") }
+  async function changeStore(storeId: string) { const response = await fetch("/api/stores", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ storeId }) }); if (!response.ok) return; setActiveStoreId(storeId); window.location.reload() }
+  useEffect(() => { loadProducts(); loadGlobalSettings(); loadStores() }, [])
 
   async function saveGlobalSettings() {
     const response = await fetch("/api/store-settings", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ storeName, storeEmail, storePhone, storeVisible, orderNotifications }) })
@@ -173,7 +177,7 @@ export default function AdminPage() {
       <div className="admin-sidebar-bottom"><button onClick={() => setGlobalSettingsOpen(true)}><Settings2 size={18} />Configuración global <span className="nav-chevron">⌄</span></button><button className="sidebar-logout" onClick={handleSignOut}><LogOut size={18} />Cerrar sesión</button><a href="/">Centro de ayuda</a></div>
     </aside>
     <main className="admin-main">
-      <header className="admin-topbar"><button className="admin-mobile-menu" aria-label="Abrir menú"><Menu size={20} /></button><div><p>Catálogo</p><h1>Productos</h1></div><div className="admin-user"><span>AM</span><div><strong>Administrador</strong><small>Cuenta principal</small></div><button className="admin-logout" onClick={handleSignOut}>Cerrar sesión</button></div></header>
+      <header className="admin-topbar"><button className="admin-mobile-menu" aria-label="Abrir menú"><Menu size={20} /></button><div><p>Catálogo</p><h1>Productos</h1></div><div className="admin-user">{stores.length > 1 && <label className="store-switcher"><span>Tienda</span><select value={activeStoreId} onChange={(event) => changeStore(event.target.value)} aria-label="Tienda activa">{stores.map((store) => <option key={store.id} value={store.id}>{store.name}</option>)}</select></label>}<span>AM</span><div><strong>Administrador</strong><small>Cuenta principal</small></div><button className="admin-logout" onClick={handleSignOut}>Cerrar sesión</button></div></header>
       <section className="admin-content" style={{ display: activeCatalogView === "Productos" ? undefined : "none" }}>
         <div className="admin-breadcrumb">Inicio <span>/</span> Catálogo <span>/</span> <strong>Productos</strong></div>
         <div className="admin-heading"><div><h2>Todos los productos</h2><p>Gestioná tu catálogo, precios, stock e imágenes.</p></div><button className="admin-primary" onClick={() => setOpen(true)}><PackagePlus size={17} />Agregar producto</button></div>

@@ -32,6 +32,18 @@ function sqlMembership(userId: string, storeId: string) {
   return db.execute(sql`SELECT "storeId", role FROM store_memberships WHERE "userId" = ${userId} AND "storeId" = ${storeId} LIMIT 1`)
 }
 
+export async function getPublicTenantId() {
+  const session = await auth.api.getSession({ headers: await headers() })
+  if (session?.user?.id) {
+    try {
+      return (await requireTenantAccess()).storeId
+    } catch {
+      return "default-store"
+    }
+  }
+  return "default-store"
+}
+
 function sqlFirstMembership(userId: string) {
   return db.execute(sql`SELECT "storeId", role FROM store_memberships WHERE "userId" = ${userId} ORDER BY CASE WHEN role = 'owner' THEN 0 ELSE 1 END, "createdAt" ASC LIMIT 1`)
 }
