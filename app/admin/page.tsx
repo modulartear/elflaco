@@ -1,6 +1,8 @@
 "use client"
 
 import { DragEvent, FormEvent, useEffect, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
+import { authClient } from "@/lib/auth-client"
 import { BarChart3, Boxes, CreditCard, ImagePlus, LayoutDashboard, Menu, PackagePlus, Search, Settings2, Tags, Truck, X } from "lucide-react"
 
 type Product = { id: string; name: string; sku: string | null; price: string; stock: number; active: boolean; featured: boolean }
@@ -10,6 +12,7 @@ const nav = [
 ] as const
 
 export default function AdminPage() {
+  const router = useRouter()
   const [products, setProducts] = useState<Product[]>([])
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState({ name: "", sku: "", price: "", stock: "", description: "", imageUrl: "", featured: false })
@@ -134,6 +137,16 @@ export default function AdminPage() {
     setEditorLastSaved(null)
   }
 
+  async function handleSignOut() {
+    const result = await authClient.signOut()
+    if (result.error) {
+      setMessage("No se pudo cerrar la sesión")
+      return
+    }
+    router.replace("/sign-in")
+    router.refresh()
+  }
+
   function saveDesign() {
     setEditorSaved(true)
     setEditorLastSaved(new Intl.DateTimeFormat("es-AR", { hour: "2-digit", minute: "2-digit" }).format(new Date()))
@@ -160,7 +173,7 @@ export default function AdminPage() {
       <div className="admin-sidebar-bottom"><button onClick={() => setGlobalSettingsOpen(true)}><Settings2 size={18} />Configuración global <span className="nav-chevron">⌄</span></button><a href="/">Centro de ayuda</a></div>
     </aside>
     <main className="admin-main">
-      <header className="admin-topbar"><button className="admin-mobile-menu" aria-label="Abrir menú"><Menu size={20} /></button><div><p>Catálogo</p><h1>Productos</h1></div><div className="admin-user"><span>AM</span><div><strong>Administrador</strong><small>Cuenta principal</small></div></div></header>
+      <header className="admin-topbar"><button className="admin-mobile-menu" aria-label="Abrir menú"><Menu size={20} /></button><div><p>Catálogo</p><h1>Productos</h1></div><div className="admin-user"><span>AM</span><div><strong>Administrador</strong><small>Cuenta principal</small></div><button className="admin-logout" onClick={handleSignOut}>Cerrar sesión</button></div></header>
       <section className="admin-content" style={{ display: activeCatalogView === "Productos" ? undefined : "none" }}>
         <div className="admin-breadcrumb">Inicio <span>/</span> Catálogo <span>/</span> <strong>Productos</strong></div>
         <div className="admin-heading"><div><h2>Todos los productos</h2><p>Gestioná tu catálogo, precios, stock e imágenes.</p></div><button className="admin-primary" onClick={() => setOpen(true)}><PackagePlus size={17} />Agregar producto</button></div>
