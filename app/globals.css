@@ -270,7 +270,7 @@ footer { margin-top: 38px; color: #ccc; background: #050505; }
  @keyframes page-settings-open { from { max-height: 0; opacity: 0; } to { max-height: 400px; opacity: 1; } }
  .admin-nav-section .page-setting-item:hover { color: #31a94c; background: #f7fbf7; }
  .admin-sidebar-bottom { display: grid; gap: 0; margin-top: auto; padding: 10px 0 14px; border-top: 1px solid #e1e3e6; }
- .admin-sidebar-bottom a { padding: 13px 15px; color: #30343a; font-size: 10px; text-decoration: none; }
+ .admin-sidebar-bottom a { padding: 13px 15px; color: #30343a; font-size: 10px; text-decoration: none; }.admin-sidebar-bottom .sidebar-logout { color: #d44747; }.admin-sidebar-bottom .sidebar-logout:hover { color: #b52f2f; background: #fff4f4; }
 .admin-main { min-width: 0; flex: 1; background: #f5f6f8; }
 .admin-main .admin-topbar { display: none; }
 .admin-content, .catalog-management { max-width: none; min-height: 100vh; padding: 20px 32px 74px; }

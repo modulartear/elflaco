@@ -3,7 +3,7 @@
 import { DragEvent, FormEvent, useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { authClient } from "@/lib/auth-client"
-import { BarChart3, Boxes, CreditCard, ImagePlus, LayoutDashboard, Menu, PackagePlus, Search, Settings2, Tags, Truck, X } from "lucide-react"
+import { BarChart3, Boxes, CreditCard, ImagePlus, LayoutDashboard, Menu, PackagePlus, Search, Settings2, Tags, Truck, LogOut, X } from "lucide-react"
 
 type Product = { id: string; name: string; sku: string | null; price: string; stock: number; active: boolean; featured: boolean }
 
@@ -170,7 +170,7 @@ export default function AdminPage() {
         <div className="admin-nav-group"><span className="admin-nav-title">Gestión de ventas</span>{nav.slice(5).map(([label, Icon]) => <button key={label} onClick={() => setActiveCatalogView(label)}><Icon size={18} />{label}<span className="nav-chevron">⌄</span></button>)}</div>
         <div className={`admin-nav-section ${pageSettingsOpen ? "is-open" : ""}`}><button className="admin-nav-section-toggle" onClick={() => setPageSettingsOpen((isOpen) => !isOpen)} aria-expanded={pageSettingsOpen}><span>Configuración de Página</span><span className="nav-chevron">{pageSettingsOpen ? "⌃" : "⌄"}</span></button>{pageSettingsOpen && <div className="page-settings-items"><button className="page-setting-item" onClick={() => setDesignPreviewOpen(true)}>Diseño</button><button className="page-setting-item">Información de mi tienda</button><button className="page-setting-item">Activar formulario de contacto</button><button className="page-setting-item">Agregar redes sociales</button><button className="page-setting-item">Añadir chat a mi tienda</button><button className="page-setting-item">Editar páginas</button></div>}</div>
       </nav>
-      <div className="admin-sidebar-bottom"><button onClick={() => setGlobalSettingsOpen(true)}><Settings2 size={18} />Configuración global <span className="nav-chevron">⌄</span></button><a href="/">Centro de ayuda</a></div>
+      <div className="admin-sidebar-bottom"><button onClick={() => setGlobalSettingsOpen(true)}><Settings2 size={18} />Configuración global <span className="nav-chevron">⌄</span></button><button className="sidebar-logout" onClick={handleSignOut}><LogOut size={18} />Cerrar sesión</button><a href="/">Centro de ayuda</a></div>
     </aside>
     <main className="admin-main">
       <header className="admin-topbar"><button className="admin-mobile-menu" aria-label="Abrir menú"><Menu size={20} /></button><div><p>Catálogo</p><h1>Productos</h1></div><div className="admin-user"><span>AM</span><div><strong>Administrador</strong><small>Cuenta principal</small></div><button className="admin-logout" onClick={handleSignOut}>Cerrar sesión</button></div></header>
