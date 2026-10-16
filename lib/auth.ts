@@ -2,7 +2,12 @@ import { betterAuth } from "better-auth"
 import { Pool } from "pg"
 import { Resend } from "resend"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+function getResendClient() {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) return null
+  return new Resend(apiKey)
+}
+
 const resendFrom = process.env.RESEND_EMAIL_DOMAIN
   ? `SHOPIA <no-reply@${process.env.RESEND_EMAIL_DOMAIN}>`
   : "SHOPIA <onboarding@resend.dev>"
@@ -32,6 +37,11 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     sendResetPassword: async ({ user, url }) => {
+      const resend = getResendClient()
+      if (!resend) {
+        console.error("[v0] Password reset email is unavailable: RESEND_API_KEY is not configured")
+        throw new Error("Password reset email is not configured")
+      }
       const { error } = await resend.emails.send(
         {
           from: resendFrom,
