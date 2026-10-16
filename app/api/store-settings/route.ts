@@ -17,12 +17,16 @@ export async function PUT(request: Request) {
   try {
     const { storeId } = await requireTenantAccess(["owner", "admin", "editor"])
     const body = await request.json()
+  const existing = await db.execute(sql`SELECT settings FROM store_settings WHERE "storeId" = ${storeId} LIMIT 1`)
+  const previousSettings = (existing.rows[0]?.settings ?? {}) as Record<string, unknown>
   const settings = {
+    ...previousSettings,
     storeName: typeof body.storeName === "string" ? body.storeName.trim().slice(0, 120) : "",
     storeEmail: typeof body.storeEmail === "string" ? body.storeEmail.trim().slice(0, 160) : "",
     storePhone: typeof body.storePhone === "string" ? body.storePhone.trim().slice(0, 80) : "",
     storeVisible: Boolean(body.storeVisible),
     orderNotifications: Boolean(body.orderNotifications),
+    ...(body.design && typeof body.design === "object" ? { design: body.design } : {}),
   }
   const result = await db.execute(sql`INSERT INTO store_settings (id, "storeId", settings, "updatedAt") VALUES (gen_random_uuid()::text, ${storeId}, ${JSON.stringify(settings)}::jsonb, NOW()) ON CONFLICT ("storeId") DO UPDATE SET settings = EXCLUDED.settings, "updatedAt" = NOW() RETURNING settings`)
     return NextResponse.json(result.rows[0]?.settings ?? settings)
