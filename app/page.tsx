@@ -169,6 +169,9 @@ export default function App() {
     setEmail("");
   }
 
+  const sectionOrder = design.sectionOrder?.length ? design.sectionOrder : ["header", "hero", "products", "footer"];
+  const sectionStyle = (section: string): React.CSSProperties => ({ order: sectionOrder.indexOf(section) === -1 ? sectionOrder.length : sectionOrder.indexOf(section) });
+
   return (
     <div className="site-shell" style={{ "--brand-color": design.brandColor || "#42b85a", "--heading-font": design.headingFont || "Open Sans", "--body-font": design.bodyFont || "Open Sans", "--panel-radius": design.borderStyle === "Redondeado" ? "12px" : design.borderStyle === "Píldora" ? "999px" : "4px" } as React.CSSProperties}>
       {notice && <div className="toast" role="status">{notice}</div>}
@@ -208,8 +211,8 @@ export default function App() {
         </div>
       )}
 
-      {selectedProduct ? <ProductDetail product={selectedProduct} onBuy={addToCart} onBack={closeProduct} /> : <main id="inicio">
-        <section className="finder content">
+      {selectedProduct ? <ProductDetail product={selectedProduct} onBuy={addToCart} onBack={closeProduct} /> : <main id="inicio" className="storefront-sections">
+        <section className="finder content" data-section="hero" style={sectionStyle("hero")}>
           <h2>{design.heroTitle || `ENCONTRÁ TODO EN ${storeName.toUpperCase()}`}</h2>
           <div className="finder-fields">
             {["Elegí una categoría", "Elegí una subcategoría", "Elegí una marca", "Elegí un modelo"].map((label, index) => (
@@ -229,9 +232,9 @@ export default function App() {
           <ProductSection title={`Resultados para “${search}”`} products={filteredProducts} onBuy={addToCart} onOpen={openProduct} />
         )}
 
-        {liveProducts.length > 0 && <ProductSection title={design.productsTitle || `Productos destacados de ${storeName}`} products={liveProducts} onBuy={addToCart} onOpen={openProduct} />}
+        {liveProducts.length > 0 && <div data-section="products" style={sectionStyle("products")}><ProductSection title={design.productsTitle || `Productos destacados de ${storeName}`} products={liveProducts} onBuy={addToCart} onOpen={openProduct} /></div>}
 
-        <section className="categories content">
+        <section className="categories content" data-section="categories" style={sectionStyle("categories")}>
           {[
             ["9aff3.png", "Cubiertas", "cubiertas"],
             ["5001b.png", "Repuestos", "repuestos"],
@@ -244,6 +247,8 @@ export default function App() {
             </a>
           ))}
         </section>
+
+        {design.addedWidgets?.map((widget, index) => <section className="content storefront-widget" data-section={`widget-${index}`} style={sectionStyle(`widget-${index}`)} key={`widget-${index}`}><h2>{typeof widget === "string" ? widget : String((widget as { title?: string }).title || "Sección personalizada")}</h2></section>)}
 
         {liveProducts.length > 0 && <div id="novedades"><ProductSection title="Productos de la tienda" products={liveProducts} onBuy={addToCart} onOpen={openProduct} /></div>}
 
@@ -274,7 +279,7 @@ export default function App() {
         </section>
       </main>}
 
-      <footer id="contacto">
+      <footer id="contacto" data-section="footer" style={sectionStyle("footer")}>
         <div className="footer-main content">
           <div><h3>Información</h3><a>Quiénes somos</a><a>Medios de envío</a><a>Devoluciones y cambios</a><a>Medios de pago</a></div>
           <div><h3>Productos</h3><a>Los más elegidos</a><a>Indumentaria</a><a>Cubiertas</a><a>Cascos</a><a>Repuestos</a></div>

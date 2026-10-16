@@ -21,7 +21,7 @@ button, input, select { font: inherit; }
 button, a, select { cursor: pointer; }
 a { color: inherit; text-decoration: none; }
 .content { width: min(1300px, calc(100% - 32px)); margin-inline: auto; }
-.site-shell { min-height: 100dvh; overflow: hidden; background: white; }
+.site-shell { min-height: 100dvh; overflow: hidden; background: white; } .storefront-sections { display: flex; flex-direction: column; } .storefront-sections > [data-section] { width: 100%; }
 .toast { position: fixed; z-index: 100; right: 22px; top: 22px; max-width: 380px; padding: 14px 20px; color: white; background: #222; border-left: 5px solid #ff7900; box-shadow: 0 8px 30px #0004; font-size: 13px; }
 
 header { background: #fff; }
