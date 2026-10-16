@@ -99,7 +99,7 @@ export default function App() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const publicStore = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("store") : null;
   const catalogUrl = publicStore ? `/api/catalog?store=${encodeURIComponent(publicStore)}` : "/api/catalog";
-  const { data: store } = useSWR<{ name: string; email: string; phone: string; storeName?: string; storeEmail?: string; storePhone?: string; design?: { brandColor?: string; headingFont?: string; bodyFont?: string; borderStyle?: string; heroTitle?: string; headerTitle?: string; productsTitle?: string; footerText?: string } }>(publicStore ? `/api/public-store?store=${encodeURIComponent(publicStore)}` : "/api/public-store", (url) => fetch(url).then((response) => response.ok ? response.json() : null));
+  const { data: store } = useSWR<{ name: string; email: string; phone: string; storeName?: string; storeEmail?: string; storePhone?: string; design?: { brandColor?: string; headingFont?: string; bodyFont?: string; borderStyle?: string; headerMessage?: string; headerLink?: string; logoPath?: string; heroTitle?: string; headerTitle?: string; productsTitle?: string; footerText?: string; sectionOrder?: string[] } }>(publicStore ? `/api/public-store?store=${encodeURIComponent(publicStore)}` : "/api/public-store", (url) => fetch(url).then((response) => response.ok ? response.json() : null));
   const design = store?.design ?? {};
   const storeName = store?.storeName || store?.name || "Mi tienda";
   const storeEmail = store?.storeEmail || store?.email || "";
@@ -170,12 +170,12 @@ export default function App() {
   }
 
   return (
-    <div className="site-shell" style={{ "--brand-color": design.brandColor || "#42b85a", "--heading-font": design.headingFont || "Open Sans", "--body-font": design.bodyFont || "Open Sans" } as React.CSSProperties}>
+    <div className="site-shell" style={{ "--brand-color": design.brandColor || "#42b85a", "--heading-font": design.headingFont || "Open Sans", "--body-font": design.bodyFont || "Open Sans", "--panel-radius": design.borderStyle === "Redondeado" ? "12px" : design.borderStyle === "Píldora" ? "999px" : "4px" } as React.CSSProperties}>
       {notice && <div className="toast" role="status">{notice}</div>}
       <header>
         <div className="header-main content">
           <button className="menu-toggle" aria-label="Abrir menú" onClick={() => setMenuOpen(!menuOpen)}><span /><span /><span /></button>
-          <a href="#inicio" className="logo" aria-label={storeName}><span className="store-logo-text">{design.headerTitle || storeName}</span></a>
+          <a href="#inicio" className="logo" aria-label={storeName}>{design.logoPath ? <img src={design.logoPath} alt={design.headerTitle || storeName} /> : <span className="store-logo-text">{design.headerTitle || storeName}</span>}</a>
           <form className="search" onSubmit={(event) => event.preventDefault()}>
             <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="¿Qué estás buscando?" aria-label="Buscar productos" />
             <button aria-label="Buscar"><img src={`${A}/c4d6c.svg`} alt="" /></button>
@@ -192,7 +192,7 @@ export default function App() {
             ))}
           </div>
         </nav>
-        <div className="promo"><img src={`${A}/abbc6.svg`} alt="" /> ENVÍOS GRATIS A TODO EL PAÍS EN COMPRAS SUPERIORES A $33.000 <img src={`${A}/b48f5.svg`} alt="" /></div>
+        <div className="promo"><img src={`${A}/abbc6.svg`} alt="" /> {design.headerMessage || "ENVÍOS GRATIS A TODO EL PAÍS EN COMPRAS SUPERIORES A $33.000"} {design.headerLink && <a href={design.headerLink}>Ver más</a>} <img src={`${A}/b48f5.svg`} alt="" /></div>
       </header>
 
       {cartOpen && (
@@ -286,7 +286,7 @@ export default function App() {
           <div>{payments.map((payment) => <img key={payment} src={`${A}/${payment}`} alt="" />)}</div>
           <div className="seals"><img key="afip-seal" src={`${A}/f5f76.png`} alt="AFIP" /></div>
         </div>
-        <div className="copyright">Copyright DiseArte - 2026. Todos los derechos reservados.</div>
+        <div className="copyright">{design.footerText || `Copyright ${storeName} - 2026. Todos los derechos reservados.`}</div>
       </footer>
       <a className="whatsapp" href="https://wa.me/5491125369000" target="_blank" rel="noreferrer" aria-label="Contactar por WhatsApp"><img src={`${A}/98f76.svg`} alt="" /></a>
     </div>
