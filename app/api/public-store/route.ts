@@ -3,6 +3,8 @@ import { sql } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { getPublicTenantId } from "@/lib/tenant"
 
+export const dynamic = "force-dynamic"
+
 export async function GET(request: Request) {
   const slug = new URL(request.url).searchParams.get("store")?.trim().toLowerCase()
   const storeId = await getPublicTenantId(slug || undefined)
