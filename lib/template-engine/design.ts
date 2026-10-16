@@ -53,20 +53,11 @@ export function normalizeDesign(value: unknown): StoreDesign {
     ? input.addedWidgets.filter((item): item is DesignWidget => Boolean(item && typeof item === "object"))
     : []
 
+  const widgetIds = addedWidgets.map((_, index) => `widget-${index}`)
   return {
-    brandColor: typeof input.brandColor === "string" ? input.brandColor : DEFAULT_DESIGN.brandColor,
-    headingFont: typeof input.headingFont === "string" ? input.headingFont : DEFAULT_DESIGN.headingFont,
-    bodyFont: typeof input.bodyFont === "string" ? input.bodyFont : DEFAULT_DESIGN.bodyFont,
-    borderStyle: typeof input.borderStyle === "string" ? input.borderStyle : DEFAULT_DESIGN.borderStyle,
-    headerMessage: typeof input.headerMessage === "string" ? input.headerMessage : DEFAULT_DESIGN.headerMessage,
-    headerLink: typeof input.headerLink === "string" ? input.headerLink : DEFAULT_DESIGN.headerLink,
-    logoPath: typeof input.logoPath === "string" ? input.logoPath : DEFAULT_DESIGN.logoPath,
-    faviconPath: typeof input.faviconPath === "string" ? input.faviconPath : DEFAULT_DESIGN.faviconPath,
-    heroTitle: typeof input.heroTitle === "string" ? input.heroTitle : DEFAULT_DESIGN.heroTitle,
-    headerTitle: typeof input.headerTitle === "string" ? input.headerTitle : DEFAULT_DESIGN.headerTitle,
-    productsTitle: typeof input.productsTitle === "string" ? input.productsTitle : DEFAULT_DESIGN.productsTitle,
-    footerText: typeof input.footerText === "string" ? input.footerText : DEFAULT_DESIGN.footerText,
-    sectionOrder,
+    ...DEFAULT_DESIGN,
+    ...input,
+    sectionOrder: [...sectionOrder, ...widgetIds.filter((id) => !sectionOrder.includes(id))],
     addedWidgets,
   }
 }

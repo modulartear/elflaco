@@ -5,10 +5,11 @@ type TemplateRendererProps = {
   design: StoreDesign
   renderSection: (sectionId: string) => ReactNode
   renderWidget?: (widget: DesignWidget, index: number) => ReactNode
+  only?: string[]
 }
 
-export function TemplateRenderer({ design, renderSection, renderWidget }: TemplateRendererProps) {
-  const sections = design.sectionOrder.map((sectionId) => {
+export function TemplateRenderer({ design, renderSection, renderWidget, only }: TemplateRendererProps) {
+  const sections = design.sectionOrder.filter((sectionId) => !only || only.includes(sectionId)).map((sectionId) => {
     if (sectionId.startsWith("widget-") && renderWidget) {
       const index = Number(sectionId.replace("widget-", ""))
       const widget = design.addedWidgets[index]

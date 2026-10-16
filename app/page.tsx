@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
 import { getSectionOrder, isSectionVisible as isDesignSectionVisible, normalizeDesign } from "@/lib/template-engine/design";
+import { TemplateRenderer } from "@/components/template-renderer";
 
 const A = "/assets";
 
@@ -250,7 +251,7 @@ export default function App() {
           ))}
         </section>
 
-        {design.addedWidgets?.map((widget, index) => { const item = typeof widget === "object" && widget !== null ? widget as { title?: string; text?: string; visible?: boolean } : { title: String(widget) }; return item.visible === false ? null : <section className="content storefront-widget" data-section={`widget-${index}`} style={sectionStyle(`widget-${index}`)} key={`widget-${index}`}><h2>{item.title || "Sección personalizada"}</h2>{item.text && <p>{item.text}</p>}</section> })}
+        <TemplateRenderer design={design} only={design.addedWidgets.map((_, index) => `widget-${index}`)} renderSection={() => null} renderWidget={(widget) => widget.visible === false ? null : <section className="content storefront-widget"><h2>{widget.title || "Sección personalizada"}</h2>{widget.text && <p>{widget.text}</p>}</section>} />
 
         {liveProducts.length > 0 && <div id="novedades"><ProductSection title="Productos de la tienda" products={liveProducts} onBuy={addToCart} onOpen={openProduct} /></div>}
 
