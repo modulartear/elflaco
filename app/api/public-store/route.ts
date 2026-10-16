@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { sql } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { getPublicTenantId } from "@/lib/tenant"
+import { normalizeDesign } from "@/lib/template-engine/design"
 
 export const dynamic = "force-dynamic"
 
@@ -24,5 +25,6 @@ export async function GET(request: Request) {
     email: row.email ?? "",
     phone: row.phone ?? "",
     ...(row.settings ?? {}),
+    design: normalizeDesign((row.settings as Record<string, unknown> | undefined)?.design),
   })
 }
