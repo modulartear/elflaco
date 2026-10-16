@@ -235,9 +235,9 @@ export default function App() {
           <ProductSection title={`Resultados para “${search}”`} products={filteredProducts} onBuy={addToCart} onOpen={openProduct} />
         )}
 
-        {liveProducts.length > 0 && <div data-section="products" style={sectionStyle("products")}><ProductSection title={design.productsTitle || `Productos destacados de ${storeName}`} products={liveProducts} onBuy={addToCart} onOpen={openProduct} /></div>}
+        {isSectionVisible("products") && liveProducts.length > 0 && <div data-section="products" style={sectionStyle("products")}><ProductSection title={design.productsTitle || `Productos destacados de ${storeName}`} products={liveProducts} onBuy={addToCart} onOpen={openProduct} /></div>}
 
-        <section className="categories content" data-section="categories" style={sectionStyle("categories")}>
+        {isSectionVisible("categories") && <section className="categories content" data-section="categories" style={sectionStyle("categories")}>
           {[
             ["9aff3.png", "Cubiertas", "cubiertas"],
             ["5001b.png", "Repuestos", "repuestos"],
@@ -249,7 +249,7 @@ export default function App() {
               <div><h2>{label}</h2><span>VER MÁS</span></div>
             </a>
           ))}
-        </section>
+        </section>}
 
         <TemplateRenderer design={design} only={design.addedWidgets.map((_, index) => `widget-${index}`)} renderSection={() => null} renderWidget={(widget) => widget.visible === false ? null : <section className="content storefront-widget"><h2>{widget.title || "Sección personalizada"}</h2>{widget.text && <p>{widget.text}</p>}</section>} />
 
@@ -282,7 +282,7 @@ export default function App() {
         </section>
       </main>}
 
-      <footer id="contacto" data-section="footer" style={sectionStyle("footer")}>
+      {isSectionVisible("footer") && <footer id="contacto" data-section="footer" style={sectionStyle("footer")}>
         <div className="footer-main content">
           <div><h3>Información</h3><a>Quiénes somos</a><a>Medios de envío</a><a>Devoluciones y cambios</a><a>Medios de pago</a></div>
           <div><h3>Productos</h3><a>Los más elegidos</a><a>Indumentaria</a><a>Cubiertas</a><a>Cascos</a><a>Repuestos</a></div>
@@ -295,7 +295,7 @@ export default function App() {
           <div className="seals"><img key="afip-seal" src={`${A}/f5f76.png`} alt="AFIP" /></div>
         </div>
         <div className="copyright">{design.footerText || `Copyright ${storeName} - 2026. Todos los derechos reservados.`}</div>
-      </footer>
+      </footer>}
       <a className="whatsapp" href="https://wa.me/5491125369000" target="_blank" rel="noreferrer" aria-label="Contactar por WhatsApp"><img src={`${A}/98f76.svg`} alt="" /></a>
     </div>
   );

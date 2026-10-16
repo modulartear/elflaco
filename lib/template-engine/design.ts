@@ -23,7 +23,7 @@ export const DEFAULT_DESIGN = {
   headerTitle: "Mi tienda",
   productsTitle: "Productos destacados",
   footerText: "Calidad y confianza para tu moto",
-  sectionOrder: ["header", "hero", "products", "footer"] as string[],
+  sectionOrder: ["header", "hero", "products", "categories", "footer"] as string[],
   addedWidgets: [] as DesignWidget[],
 } as const
 
