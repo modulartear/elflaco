@@ -21,7 +21,7 @@ button, input, select { font: inherit; }
 button, a, select { cursor: pointer; }
 a { color: inherit; text-decoration: none; }
 .content { width: min(1300px, calc(100% - 32px)); margin-inline: auto; }
-.site-shell { min-height: 100dvh; overflow: hidden; background: white; } .storefront-sections { display: flex; flex-direction: column; } .storefront-sections > [data-section] { width: 100%; }
+.site-shell { min-height: 100dvh; overflow: hidden; background: white; font-family: var(--body-font, inherit); } .site-shell h1, .site-shell h2, .site-shell h3, .site-shell h4 { font-family: var(--heading-font, inherit); } .storefront-sections { display: flex; flex-direction: column; } .storefront-sections > [data-section] { width: 100%; }
 .toast { position: fixed; z-index: 100; right: 22px; top: 22px; max-width: 380px; padding: 14px 20px; color: white; background: #222; border-left: 5px solid #ff7900; box-shadow: 0 8px 30px #0004; font-size: 13px; }
 
 header { background: #fff; }
@@ -41,11 +41,11 @@ header { background: #fff; }
 .cart b { position: absolute; right: -9px; top: -9px; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; color: white; background: #ff7900; font-size: 10px; }
 .menu-toggle { display: none; width: 24px; padding: 3px 0; }
 .menu-toggle span { display: block; height: 2px; margin: 4px 0; background: #222; }
-.nav { background: #050505; color: white; border-bottom: 4px solid #ff7900; }
+.nav { background: #050505; color: white; border-bottom: 4px solid var(--brand-color, #ff7900); font-family: var(--body-font, inherit); }
 .nav .content { display: flex; align-items: center; justify-content: center; }
 .nav a { padding: 13px 19px; font-family: "Barlow:Bold"; font-size: 12px; transition: color .2s; }
 .nav a:hover { color: #ff7900; }
-.promo { display: flex; justify-content: center; align-items: center; gap: 28px; background: #b0b0b0; color: #111; text-align: center; font-family: "Montserrat:Bold"; font-size: 10px; padding: 7px; letter-spacing: .3px; }
+.promo { display: flex; justify-content: center; align-items: center; gap: 28px; background: color-mix(in srgb, var(--brand-color, #42b85a) 18%, #b0b0b0); color: #111; text-align: center; font-family: var(--body-font, "Montserrat:Bold"); font-size: 10px; padding: 7px; letter-spacing: .3px; }
 .promo img { width: 7px; height: 13px; }
 
 .hero { display: grid; grid-template-columns: 1.42fr 1fr; gap: 15px; padding-top: 38px; }
@@ -61,7 +61,7 @@ header { background: #fff; }
 .select-wrap { position: relative; }
 .select-wrap select { width: 100%; appearance: none; }
 .select-wrap img { position: absolute; right: 12px; top: 17px; width: 10px; height: 7px; pointer-events: none; }
-.finder button, .tire-finder button { color: white; background: #888; font-family: "Barlow Condensed:ExtraBold"; text-transform: uppercase; letter-spacing: .8px; }
+.finder button, .tire-finder button { color: white; background: var(--brand-color, #888); font-family: "Barlow Condensed:ExtraBold"; text-transform: uppercase; letter-spacing: .8px; }
 
 .categories { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; padding-top: 38px; }
 .category { position: relative; overflow: hidden; border-radius: 4px; aspect-ratio: 306/217; box-shadow: 0 0 6px #3334; }
@@ -78,7 +78,7 @@ header { background: #fff; }
 .section-arrows img { width: 9px; height: 18px; }
 .section-heading span { color: #888; font-size: 10px; display: none; }
 .product-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; }
-.product-card { min-width: 0; overflow: hidden; border-radius: 4px; background: white; box-shadow: 0 0 6px #3334; transition: transform .2s, box-shadow .2s; }
+.product-card { min-width: 0; overflow: hidden; border-radius: var(--panel-radius, 4px); background: white; box-shadow: 0 0 6px #3334; transition: transform .2s, box-shadow .2s; }
 .product-card:hover { transform: translateY(-3px); box-shadow: 0 7px 18px #3333; }
 .product-image { position: relative; aspect-ratio: 1; overflow: hidden; }
 .product-image > img { width: 100%; height: 100%; object-fit: contain; }
