@@ -99,7 +99,7 @@ export default function App() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const publicStore = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("store") : null;
   const catalogUrl = publicStore ? `/api/catalog?store=${encodeURIComponent(publicStore)}` : "/api/catalog";
-  const { data: store } = useSWR<{ name: string; email: string; phone: string; storeName?: string; storeEmail?: string; storePhone?: string; design?: { brandColor?: string; headingFont?: string; bodyFont?: string; borderStyle?: string; headerMessage?: string; headerLink?: string; logoPath?: string; heroTitle?: string; headerTitle?: string; productsTitle?: string; footerText?: string; sectionOrder?: string[] } }>(publicStore ? `/api/public-store?store=${encodeURIComponent(publicStore)}` : "/api/public-store", (url) => fetch(url).then((response) => response.ok ? response.json() : null));
+  const { data: store } = useSWR<{ name: string; email: string; phone: string; storeName?: string; storeEmail?: string; storePhone?: string; design?: { brandColor?: string; headingFont?: string; bodyFont?: string; borderStyle?: string; headerMessage?: string; headerLink?: string; logoPath?: string; heroTitle?: string; headerTitle?: string; productsTitle?: string; footerText?: string; sectionOrder?: string[] } }>(publicStore ? `/api/public-store?store=${encodeURIComponent(publicStore)}` : "/api/public-store", (url) => fetch(url, { cache: "no-store" }).then((response) => response.ok ? response.json() : null));
   const design = store?.design ?? {};
   const storeName = store?.storeName || store?.name || "Mi tienda";
   const storeEmail = store?.storeEmail || store?.email || "";

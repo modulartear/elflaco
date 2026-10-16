@@ -3,6 +3,8 @@ import { sql } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { requireTenantAccess, tenantErrorResponse } from "@/lib/tenant"
 
+export const dynamic = "force-dynamic"
+
 export async function GET() {
   try {
     const { storeId } = await requireTenantAccess()
