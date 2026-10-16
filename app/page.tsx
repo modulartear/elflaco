@@ -2,6 +2,8 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
+import { getSectionOrder, isSectionVisible as isDesignSectionVisible, normalizeDesign } from "@/lib/template-engine/design";
+import { TemplateRenderer } from "@/components/template-renderer";
 
 const A = "/assets";
 
@@ -100,7 +102,7 @@ export default function App() {
   const publicStore = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("store") : null;
   const catalogUrl = publicStore ? `/api/catalog?store=${encodeURIComponent(publicStore)}` : "/api/catalog";
   const { data: store } = useSWR<{ name: string; email: string; phone: string; storeName?: string; storeEmail?: string; storePhone?: string; design?: { brandColor?: string; headingFont?: string; bodyFont?: string; borderStyle?: string; headerMessage?: string; headerLink?: string; logoPath?: string; heroTitle?: string; headerTitle?: string; productsTitle?: string; footerText?: string; sectionOrder?: string[] } }>(publicStore ? `/api/public-store?store=${encodeURIComponent(publicStore)}` : "/api/public-store", (url) => fetch(url, { cache: "no-store" }).then((response) => response.ok ? response.json() : null));
-  const design = store?.design ?? {};
+  const design = normalizeDesign(store?.design);
   const storeName = store?.storeName || store?.name || "Mi tienda";
   const storeEmail = store?.storeEmail || store?.email || "";
   const storePhone = store?.storePhone || store?.phone || "";
@@ -169,6 +171,10 @@ export default function App() {
     setEmail("");
   }
 
+  const sectionOrder = design.sectionOrder;
+  const isSectionVisible = (section: string) => isDesignSectionVisible(design, section);
+  const sectionStyle = (section: string): React.CSSProperties => ({ order: getSectionOrder(design, section) });
+
   return (
     <div className="site-shell" style={{ "--brand-color": design.brandColor || "#42b85a", "--heading-font": design.headingFont || "Open Sans", "--body-font": design.bodyFont || "Open Sans", "--panel-radius": design.borderStyle === "Redondeado" ? "12px" : design.borderStyle === "Píldora" ? "999px" : "4px" } as React.CSSProperties}>
       {notice && <div className="toast" role="status">{notice}</div>}
@@ -208,8 +214,8 @@ export default function App() {
         </div>
       )}
 
-      {selectedProduct ? <ProductDetail product={selectedProduct} onBuy={addToCart} onBack={closeProduct} /> : <main id="inicio">
-        <section className="finder content">
+      {selectedProduct ? <ProductDetail product={selectedProduct} onBuy={addToCart} onBack={closeProduct} /> : <main id="inicio" className="storefront-sections">
+        {isSectionVisible("hero") && <section className="finder content" data-section="hero" style={sectionStyle("hero")}>
           <h2>{design.heroTitle || `ENCONTRÁ TODO EN ${storeName.toUpperCase()}`}</h2>
           <div className="finder-fields">
             {["Elegí una categoría", "Elegí una subcategoría", "Elegí una marca", "Elegí un modelo"].map((label, index) => (
@@ -223,15 +229,15 @@ export default function App() {
             ))}
             <button onClick={() => setNotice(filters.some(Boolean) ? "Filtros aplicados" : "Elegí al menos una opción")}>Buscar</button>
           </div>
-        </section>
+        </section>}
 
         {filteredProducts !== null && (
           <ProductSection title={`Resultados para “${search}”`} products={filteredProducts} onBuy={addToCart} onOpen={openProduct} />
         )}
 
-        {liveProducts.length > 0 && <ProductSection title={design.productsTitle || `Productos destacados de ${storeName}`} products={liveProducts} onBuy={addToCart} onOpen={openProduct} />}
+        {isSectionVisible("products") && liveProducts.length > 0 && <div data-section="products" style={sectionStyle("products")}><ProductSection title={design.productsTitle || `Productos destacados de ${storeName}`} products={liveProducts} onBuy={addToCart} onOpen={openProduct} /></div>}
 
-        <section className="categories content">
+        {isSectionVisible("categories") && <section className="categories content" data-section="categories" style={sectionStyle("categories")}>
           {[
             ["9aff3.png", "Cubiertas", "cubiertas"],
             ["5001b.png", "Repuestos", "repuestos"],
@@ -243,7 +249,9 @@ export default function App() {
               <div><h2>{label}</h2><span>VER MÁS</span></div>
             </a>
           ))}
-        </section>
+        </section>}
+
+        <TemplateRenderer design={design} only={design.addedWidgets.map((_, index) => `widget-${index}`)} renderSection={() => null} renderWidget={(widget) => widget.visible === false ? null : <section className="content storefront-widget"><h2>{widget.title || "Sección personalizada"}</h2>{widget.text && <p>{widget.text}</p>}</section>} />
 
         {liveProducts.length > 0 && <div id="novedades"><ProductSection title="Productos de la tienda" products={liveProducts} onBuy={addToCart} onOpen={openProduct} /></div>}
 
@@ -274,7 +282,7 @@ export default function App() {
         </section>
       </main>}
 
-      <footer id="contacto">
+      {isSectionVisible("footer") && <footer id="contacto" data-section="footer" style={sectionStyle("footer")}>
         <div className="footer-main content">
           <div><h3>Información</h3><a>Quiénes somos</a><a>Medios de envío</a><a>Devoluciones y cambios</a><a>Medios de pago</a></div>
           <div><h3>Productos</h3><a>Los más elegidos</a><a>Indumentaria</a><a>Cubiertas</a><a>Cascos</a><a>Repuestos</a></div>
@@ -287,7 +295,7 @@ export default function App() {
           <div className="seals"><img key="afip-seal" src={`${A}/f5f76.png`} alt="AFIP" /></div>
         </div>
         <div className="copyright">{design.footerText || `Copyright ${storeName} - 2026. Todos los derechos reservados.`}</div>
-      </footer>
+      </footer>}
       <a className="whatsapp" href="https://wa.me/5491125369000" target="_blank" rel="noreferrer" aria-label="Contactar por WhatsApp"><img src={`${A}/98f76.svg`} alt="" /></a>
     </div>
   );

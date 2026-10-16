@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { sql } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { requireTenantAccess, tenantErrorResponse } from "@/lib/tenant"
+import { normalizeDesign } from "@/lib/template-engine/design"
 
 export const dynamic = "force-dynamic"
 
@@ -9,7 +10,8 @@ export async function GET() {
   try {
     const { storeId } = await requireTenantAccess()
     const result = await db.execute(sql`SELECT settings FROM store_settings WHERE "storeId" = ${storeId} LIMIT 1`)
-    return NextResponse.json(result.rows[0]?.settings ?? {})
+    const settings = (result.rows[0]?.settings ?? {}) as Record<string, unknown>
+    return NextResponse.json({ ...settings, design: normalizeDesign(settings.design) })
   } catch (error) {
     return tenantErrorResponse(error)
   }
@@ -28,7 +30,7 @@ export async function PUT(request: Request) {
     storePhone: typeof body.storePhone === "string" ? body.storePhone.trim().slice(0, 80) : "",
     storeVisible: Boolean(body.storeVisible),
     orderNotifications: Boolean(body.orderNotifications),
-    ...(body.design && typeof body.design === "object" ? { design: body.design } : {}),
+    ...(body.design && typeof body.design === "object" ? { design: { ...(previousSettings.design as Record<string, unknown> ?? {}), ...body.design } } : {}),
   }
   const result = await db.execute(sql`INSERT INTO store_settings (id, "storeId", settings, "updatedAt") VALUES (gen_random_uuid()::text, ${storeId}, ${JSON.stringify(settings)}::jsonb, NOW()) ON CONFLICT ("storeId") DO UPDATE SET settings = EXCLUDED.settings, "updatedAt" = NOW() RETURNING settings`)
     return NextResponse.json(result.rows[0]?.settings ?? settings)
