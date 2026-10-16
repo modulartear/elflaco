@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import useSWR from "swr";
+import { getSectionOrder, isSectionVisible as isDesignSectionVisible, normalizeDesign } from "@/lib/template-engine/design";
 
 const A = "/assets";
 
@@ -100,7 +101,7 @@ export default function App() {
   const publicStore = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("store") : null;
   const catalogUrl = publicStore ? `/api/catalog?store=${encodeURIComponent(publicStore)}` : "/api/catalog";
   const { data: store } = useSWR<{ name: string; email: string; phone: string; storeName?: string; storeEmail?: string; storePhone?: string; design?: { brandColor?: string; headingFont?: string; bodyFont?: string; borderStyle?: string; headerMessage?: string; headerLink?: string; logoPath?: string; heroTitle?: string; headerTitle?: string; productsTitle?: string; footerText?: string; sectionOrder?: string[] } }>(publicStore ? `/api/public-store?store=${encodeURIComponent(publicStore)}` : "/api/public-store", (url) => fetch(url, { cache: "no-store" }).then((response) => response.ok ? response.json() : null));
-  const design = store?.design ?? {};
+  const design = normalizeDesign(store?.design);
   const storeName = store?.storeName || store?.name || "Mi tienda";
   const storeEmail = store?.storeEmail || store?.email || "";
   const storePhone = store?.storePhone || store?.phone || "";
@@ -169,9 +170,9 @@ export default function App() {
     setEmail("");
   }
 
-  const sectionOrder = design.sectionOrder?.length ? design.sectionOrder : ["header", "hero", "products", "footer"];
-  const isSectionVisible = (section: string) => sectionOrder.includes(section);
-  const sectionStyle = (section: string): React.CSSProperties => ({ order: sectionOrder.indexOf(section) === -1 ? sectionOrder.length : sectionOrder.indexOf(section) });
+  const sectionOrder = design.sectionOrder;
+  const isSectionVisible = (section: string) => isDesignSectionVisible(design, section);
+  const sectionStyle = (section: string): React.CSSProperties => ({ order: getSectionOrder(design, section) });
 
   return (
     <div className="site-shell" style={{ "--brand-color": design.brandColor || "#42b85a", "--heading-font": design.headingFont || "Open Sans", "--body-font": design.bodyFont || "Open Sans", "--panel-radius": design.borderStyle === "Redondeado" ? "12px" : design.borderStyle === "Píldora" ? "999px" : "4px" } as React.CSSProperties}>
