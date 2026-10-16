@@ -170,6 +170,7 @@ export default function App() {
   }
 
   const sectionOrder = design.sectionOrder?.length ? design.sectionOrder : ["header", "hero", "products", "footer"];
+  const isSectionVisible = (section: string) => sectionOrder.includes(section);
   const sectionStyle = (section: string): React.CSSProperties => ({ order: sectionOrder.indexOf(section) === -1 ? sectionOrder.length : sectionOrder.indexOf(section) });
 
   return (
@@ -212,7 +213,7 @@ export default function App() {
       )}
 
       {selectedProduct ? <ProductDetail product={selectedProduct} onBuy={addToCart} onBack={closeProduct} /> : <main id="inicio" className="storefront-sections">
-        <section className="finder content" data-section="hero" style={sectionStyle("hero")}>
+        {isSectionVisible("hero") && <section className="finder content" data-section="hero" style={sectionStyle("hero")}>
           <h2>{design.heroTitle || `ENCONTRÁ TODO EN ${storeName.toUpperCase()}`}</h2>
           <div className="finder-fields">
             {["Elegí una categoría", "Elegí una subcategoría", "Elegí una marca", "Elegí un modelo"].map((label, index) => (
@@ -226,7 +227,7 @@ export default function App() {
             ))}
             <button onClick={() => setNotice(filters.some(Boolean) ? "Filtros aplicados" : "Elegí al menos una opción")}>Buscar</button>
           </div>
-        </section>
+        </section>}
 
         {filteredProducts !== null && (
           <ProductSection title={`Resultados para “${search}”`} products={filteredProducts} onBuy={addToCart} onOpen={openProduct} />
@@ -248,7 +249,7 @@ export default function App() {
           ))}
         </section>
 
-        {design.addedWidgets?.map((widget, index) => <section className="content storefront-widget" data-section={`widget-${index}`} style={sectionStyle(`widget-${index}`)} key={`widget-${index}`}><h2>{typeof widget === "string" ? widget : String((widget as { title?: string }).title || "Sección personalizada")}</h2></section>)}
+        {design.addedWidgets?.map((widget, index) => { const item = typeof widget === "object" && widget !== null ? widget as { title?: string; text?: string; visible?: boolean } : { title: String(widget) }; return item.visible === false ? null : <section className="content storefront-widget" data-section={`widget-${index}`} style={sectionStyle(`widget-${index}`)} key={`widget-${index}`}><h2>{item.title || "Sección personalizada"}</h2>{item.text && <p>{item.text}</p>}</section> })}
 
         {liveProducts.length > 0 && <div id="novedades"><ProductSection title="Productos de la tienda" products={liveProducts} onBuy={addToCart} onOpen={openProduct} /></div>}
 
